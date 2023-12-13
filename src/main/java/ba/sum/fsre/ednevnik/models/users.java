@@ -3,27 +3,12 @@ package ba.sum.fsre.ednevnik.models;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 @Entity
 public class users {
-    public users(long id, String ime, String prezime, String email) {
-        this.id = id;
-        this.ime = ime;
-        this.Prezime = prezime;
-        this.email = email;
-    }
-
-    @Id
-    @GeneratedValue
-
-    private long id;
-    private String ime;
-    private String Prezime;
-
-    public users() {
-
-    }
-
     public long getId() {
         return id;
     }
@@ -49,13 +34,41 @@ public class users {
     }
 
     public String getEmail() {
-        return email;
+        return Email;
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        Email = email;
     }
 
-    private String email;
+    public users(long id, String ime, String prezime, String email) {
+        this.id = id;
+        this.ime = ime;
+        this.Prezime = prezime;
+        this.Email = email;
+    }
+
+    @Id
+    @GeneratedValue
+
+    private long id;
+
+    @NotBlank(message="Ime je obvezno")
+    @Size(min=5, max=20, message = "Polje mora imati izmedu 5 i 20 znakova")
+    private String ime;
+
+    @NotBlank(message="Prezime je obvezno")
+    @Size(min=5, max=20, message = "Polje mora imati izmedu 5 i 20 znakova")
+    private String Prezime;
+
+    @NotBlank(message = "Prezime je obvezno")
+    @Email(message = "Email mora biti ispravnog formata")
+    private String Email;
+
+    public users() {
+
+    }
+
+
 
 }

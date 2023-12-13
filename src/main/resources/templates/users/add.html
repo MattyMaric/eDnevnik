@@ -6,26 +6,31 @@
 </head>
 <body>
 
-<div>
+<div class="container">
+    <div class="row">
+        <div class="column">
+
     <form th:action="@{/users/add}" method="post" th:object="${users}">
-        <label>Enter your first name:
+        <label>Enter your first name: </label>
         <input type="text" placeholder="Please enter your first name" th:field="*{ime}">
-        </label>
+        <div th:if="${#fields.hasErrors('ime')}" th:errors="*{ime}"> </div>
         <br>
 
-
-        <label>Enter your last name:
+        <label>Enter your last name: </label>
         <input type="text" placeholder="Please enter your last name" th:field="*{prezime}">
-        </label>
+        <div th:if="${#fields.hasErrors('prezime')}" th:errors="*{prezime}"> </div>
         <br>
 
-        <label>Enter your email:
+        <label>Enter your email:</label>
         <input type="email" placeholder="Please enter your email" th:field="*{email}">
-        </label>
+        <div th:if="${#fields.hasErrors('email')}" th:errors="*{email}"> </div>
         <br>
+
         <button type="submit">Add user</button>
     </form>
 
+        </div>
+    </div>
 </div>
 
 </body>

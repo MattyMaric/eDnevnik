@@ -26,6 +26,12 @@ public class UserController {
 
     @PostMapping("/users/add")
     public String newUser (users user, BindingResult bindingresult, Model model){
+        boolean errors = bindingresult.hasErrors();
+
+        if(errors){
+            model.addAttribute("user", user);
+            return "users/add";
+        }
         userRepo.save(user);
     return "redirect:/users/add";
     }
