@@ -2,7 +2,9 @@ package ba.sum.fsre.ednevnik.controllers;
 
 import ba.sum.fsre.ednevnik.models.users;
 import ba.sum.fsre.ednevnik.repositories.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -10,29 +12,32 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-
-public class UserController {
+public class AuthController {
 
     @Autowired
     UserRepository userRepo;
 
-    @GetMapping("users/add")
+    @GetMapping("auth/register")
     public String add(Model model){
         users user = new users();
         model.addAttribute("users", user);
-        return "users/add";
+        return "users/register";
     }
 
 
-    @PostMapping("/users/add")
-    public String newUser (users user, BindingResult bindingresult, Model model){
+    @PostMapping("auth/register")
+    public String newUser (@Valid users user, BindingResult bindingresult, Model model){
         boolean errors = bindingresult.hasErrors();
 
         if(errors){
             model.addAttribute("user", user);
-            return "users/add";
-        }
+            return "users/register";
+        }else{
+
+            BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+            user.setLozinka(encoder.encode(user.getLozinka()));
+            user.setPotvrdaLozinke((encoder.encode(user.getPotvrdaLozinke())));
         userRepo.save(user);
-    return "redirect:/users/add";
+    return "redirect:auth/register";}
     }
 }
