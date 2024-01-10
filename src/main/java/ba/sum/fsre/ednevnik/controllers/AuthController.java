@@ -1,6 +1,6 @@
 package ba.sum.fsre.ednevnik.controllers;
 
-import ba.sum.fsre.ednevnik.models.users;
+import ba.sum.fsre.ednevnik.models.User;
 import ba.sum.fsre.ednevnik.repositories.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,14 +19,14 @@ public class AuthController {
 
     @GetMapping("auth/register")
     public String add(Model model){
-        users user = new users();
-        model.addAttribute("users", user);
+        User user = new User();
+        model.addAttribute("user", user);
         return "users/register";
     }
 
 
     @PostMapping("auth/register")
-    public String newUser (@Valid users user, BindingResult bindingresult, Model model){
+    public String newUser (@Valid User user, BindingResult bindingresult, Model model){
         boolean errors = bindingresult.hasErrors();
 
         if(errors){
@@ -35,9 +35,19 @@ public class AuthController {
         }else{
 
             BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-            user.setLozinka(encoder.encode(user.getLozinka()));
-            user.setPotvrdaLozinke((encoder.encode(user.getPotvrdaLozinke())));
-        userRepo.save(user);
+            String passwordEncoded = encoder.encode(user.getLozinka());
+            user.setLozinka(passwordEncoded);
+            user.setPotvrdaLozinke(passwordEncoded);
+            userRepo.save(user);
     return "redirect:auth/register";}
     }
+
+    @GetMapping("/auth/login")
+    public String login (Model model){
+        model.addAttribute("user",new User());
+
+        return "users/login";
+    }
+
 }
+

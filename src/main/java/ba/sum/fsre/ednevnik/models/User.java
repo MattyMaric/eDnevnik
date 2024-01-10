@@ -6,10 +6,10 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.*;
 
-//Ja
+
 
 @Entity
-public class users {
+public class User {
 
     @Id
     @GeneratedValue
@@ -34,12 +34,12 @@ public class users {
     @Transient
     String potvrdaLozinke;
 
-    public users() {
+    public User() {
 
     }
 
 
-    public users(long id, String ime, String prezime, String email, String lozinka, String potvrdaLozinke) {
+    public User(long id, String ime, String prezime, String email, String lozinka, String potvrdaLozinke) {
         this.id = id;
         this.ime = ime;
         this.Prezime = prezime;
