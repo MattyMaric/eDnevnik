@@ -2,15 +2,16 @@ package ba.sum.fsre.ednevnik.controllers;
 
 import ba.sum.fsre.ednevnik.models.User;
 import ba.sum.fsre.ednevnik.repositories.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -22,21 +23,26 @@ public class UserController {
     UserRepository userRepository;
 
     @GetMapping("/users")
-    public String listUsers(Model model) {
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public String listUsers (Model model){
         List<User> users = userRepository.findAll();
         model.addAttribute("users", users);
         return "users/index";
     }
 
+    // U klasi UserController
+
     @GetMapping("/users/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String showAddUserForm(Model model) {
         model.addAttribute("user", new User());
         return "users/add";
     }
 
     @PostMapping("/users/add")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String addUser(@Valid User user, BindingResult result, Model model) {
-        if (result.hasErrors()) {
+        if (result.hasErrors()){
             model.addAttribute("user", user);
             return "users/add";
         } else {
@@ -50,12 +56,16 @@ public class UserController {
     }
 
     @PostMapping("/users/delete/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String deleteUser(@PathVariable Long userId) {
         userRepository.deleteById(userId);
         return "redirect:/users";
     }
 
+    // U klasi UserController
+
     @GetMapping("/users/edit/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String showEditUserForm(@PathVariable Long userId, Model model) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Neispravan ID korisnika: " + userId));
@@ -64,6 +74,7 @@ public class UserController {
     }
 
     @PostMapping("/users/edit/{userId}")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public String updateUser(@PathVariable Long userId, @ModelAttribute User user, Model model) {
         // Provjerite postoji li korisnik s tim ID-om
         User existingUser = userRepository.findById(userId)
@@ -76,6 +87,7 @@ public class UserController {
         String lozinka = encoder.encode(user.getLozinka());
         existingUser.setLozinka(lozinka);
         existingUser.setPotvrdaLozinke(lozinka);
+        existingUser.setRoles(user.getRoles());
         // Postavite ostala polja po potrebi
         userRepository.save(existingUser);
         return "redirect:/users";

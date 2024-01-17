@@ -39,7 +39,7 @@ public class AuthController {
             user.setLozinka(passwordEncoded);
             user.setPotvrdaLozinke(passwordEncoded);
             userRepo.save(user);
-    return "redirect:auth/register";}
+    return "redirect:auth/login";}
     }
 
     @GetMapping("/auth/login")

@@ -1,54 +1,53 @@
 package ba.sum.fsre.ednevnik.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Transient;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
-
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class User {
 
     @Id
     @GeneratedValue
-
     private Long id;
 
-    @NotBlank(message = "Ime je obvezno")
-    @Size(min = 5, max = 20, message = "Polje mora imati izmedu 5 i 20 znakova")
+    @Size(min=5, max=20, message = "Polje ime mora biti izmđu 5 i 20 znakova.")
+    @NotBlank(message="Polje ime je obvezno")
     String ime;
 
-    @NotBlank(message = "Prezime je obvezno")
-    @Size(min = 5, max = 20, message = "Polje mora imati izmedu 5 i 20 znakova")
-    String Prezime;
+    @Size(min=5, max=20, message = "Polje ime mora biti izmđu 5 i 20 znakova.")
+    @NotBlank(message="Polje prezime je obvezno")
+    String prezime;
 
-    @NotBlank(message = "Prezime je obvezno")
-    @Email(message = "Email mora biti ispravnog formata")
-    String Email;
+    @NotBlank(message="Polje email je obvezno")
+    @Email(message = "Email adresa mora biti ispravnog formata.")
+    String email;
 
-    @NotBlank(message = "Molimo unesite lozinku!")
+    @NotBlank(message = "Molimo unesite lozinku")
     String lozinka;
-    @NotBlank(message = "Molimo ponovo unesite lozinku!")
+
+    @NotBlank(message = "Molimo ponovite lozinku")
     @Transient
     String potvrdaLozinke;
 
-    public User() {
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Enumerated(EnumType.STRING)
+    Set<Role> roles = new HashSet<>();
 
-    }
+    public User() {}
 
-
-    public User(long id, String ime, String prezime, String email, String lozinka, String potvrdaLozinke) {
+    public User(Long id, String ime, String prezime, String email, String lozinka, String potvrdaLozinke) {
         this.id = id;
         this.ime = ime;
-        this.Prezime = prezime;
-        this.Email = email;
-        this.potvrdaLozinke = potvrdaLozinke;
+        this.prezime = prezime;
+        this.email = email;
         this.lozinka = lozinka;
+        this.potvrdaLozinke = potvrdaLozinke;
+        roles.add(Role.STUDENT);
     }
 
-   
 
     public Long getId() {
         return id;
@@ -67,22 +66,23 @@ public class User {
     }
 
     public String getPrezime() {
-        return Prezime;
+        return prezime;
     }
 
     public void setPrezime(String prezime) {
-        Prezime = prezime;
+        this.prezime = prezime;
     }
 
     public String getEmail() {
-        return Email;
+        return email;
     }
 
     public void setEmail(String email) {
-        Email = email;
+        this.email = email;
     }
 
-     public String getLozinka() {
+
+    public String getLozinka() {
         return lozinka;
     }
 
@@ -98,11 +98,20 @@ public class User {
         this.potvrdaLozinke = potvrdaLozinke;
     }
 
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
+    }
+
     @AssertTrue(message = "Lozinke se moraju podudarati")
-    public boolean isPasswordsEqual() {
+    public boolean isPasswordsEqual(){
         try {
             return this.lozinka.equals(this.potvrdaLozinke);
-        } catch (Exception e) {
+        } catch (Exception e){
             return false;
         }
     }
