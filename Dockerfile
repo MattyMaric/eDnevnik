@@ -4,7 +4,7 @@ COPY pom.xml /home/app
 RUN mvn -f /home/app/pom.xml clean package -DskipTests
 FROM openjdk:18-jdk-slim
 
-COPY --from=build /home/app/target/eDnevnik-0.0.1-SNAPSHOT.jar/app/ednevnik.jar
+COPY --from=build /home/app/target/eDnevnik-0.0.1-SNAPSHOT.jar /app/ednevnik.jar
 RUN mkdir /app/uploads
 WORKDIR /app
 EXPOSE 8080
